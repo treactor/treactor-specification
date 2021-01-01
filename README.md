@@ -38,69 +38,24 @@ Depending the content of the bracket the call will be different. If treactor det
 atom service will be made. But if treactor detects another sub-molecule it calls the next orbit and apply the same
 logic till only atoms are left. So the example above will result in:
 
-`http://treactor-api/rr/split?molecule=[[H]]^2[O]`
+`http://treactor-api/tr/split?molecule=[[H]]^2[O]`
 
 calling
 
-* `http://orbit-1/rr/split?molecule=[H]`
-* `http://atom-o/rr/atom?atom=O`
-* `http://atom-o/rr/atom?atom=O`
+* `http://orbit-1/tr/split?molecule=[H]`
+* `http://atom-o/tr/atom?atom=O`
+* `http://atom-o/tr/atom?atom=O`
 
 *orbit* will split the molecule [H] (ok, this looks strange, but each bracket is a layer) into it's atoms, in this
 case only 1 `H`:
 
-* `http://atom-h/rr/atom?atom=H`
+* `http://atom-h/tr/atom?atom=H`
 
-Try the local installation, to see how it looks in the trace (this will make it more clear).
+Try the local [installation](installation.md), to see how it looks in the trace (this will make it more clear).
 
-## Installation
+## Implementations
 
-### Pre-Requirement
-
-Create a directory `tmp` and `work` in this repo. Don't worry, they are in the `.gitignore` so you do not accidentally
-check them in.
-
-### Local
-
-Build the `treactor` from source
-
-`go install ./cmd/treactor/`
-
-Set the environmental variables. Replace `project-name` project with your own
-
-```
-export PORT=3330
-export TREACTOR_NAME=reactor-api
-export TREACTOR_VERSION=1
-export TREACTOR_DEBUG=1
-export TREACTOR_PROFILE=0
-export TREACTOR_MODE=local
-```
-
-Fire up the treactor
-
-`treactor`
-
-And test it by calling:
-
-http://localhost:3330/treact/split?molecule=[[H]]^2[O]
-
-Go to the Cloud Console, select *Trace*.
-
-### Kubernetes
-
-*Not yet fully tested/supported*
-
-
-`go install ./cmd/trprep/`
-
-`kubectl label namespace default istio-injection=disabled --overwrite`
-
-### Istio
-
-*Not yet fully tested/supported*
-
-`kubectl label namespace default istio-injection=enabled --overwrite`
+[Implementations](implementations.md)
 
 ## Specification
 
