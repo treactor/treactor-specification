@@ -35,21 +35,21 @@ and an optional parameter (`s` or `p`), this tells treactor how many times the s
 sequential or parallel). Multiple calls can be make by appending them using `^` (sequential) or `*` (parallel).
 
 Depending the content of the bracket the call will be different. If treactor detects an atom a call to the corresponding
-atom service will be made. But if treactor detects another sub-molecule it calls the next orbit and apply the same
+atom service will be made. But if treactor detects another sub-molecule it calls the next bond and apply the same
 logic till only atoms are left. So the example above will result in:
 
-`http://treactor-api/tr/split?molecule=[[H]]^2[O]`
+`http://treactor-api/treact/split?molecule=[[H]]^2[O]`
 
 calling
 
-* `http://orbit-1/tr/split?molecule=[H]`
-* `http://atom-o/tr/atom?atom=O`
-* `http://atom-o/tr/atom?atom=O`
+* `http://bond-1/treact/split?molecule=[h]`
+* `http://atom-o/treact/atom?symbol=o`
+* `http://atom-o/treact/atom?symbol=o`
 
-*orbit* will split the molecule [H] (ok, this looks strange, but each bracket is a layer) into it's atoms, in this
+*bond* will split the molecule [H] (ok, this looks strange, but each bracket is a layer) into it's atoms, in this
 case only 1 `H`:
 
-* `http://atom-h/tr/atom?atom=H`
+* `http://atom-h/treact/atom?symbol=H`
 
 Try the local [installation](installation.md), to see how it looks in the trace (this will make it more clear).
 
@@ -57,13 +57,25 @@ Try the local [installation](installation.md), to see how it looks in the trace 
 
 [Implementations](implementations.md)
 
-## Specification
+## Services
 
-### Reactor Prepare (trprep)
+### treactor-ui
 
-Prepares the Kubernetes files, from the templates
 
-### Environment Variables
+## treactor-api
+
+`/treact/split?molecule=[h]`
+
+## bound-n
+
+`/treact/bound/n?molecule=[h]`
+
+## atom-x
+
+`/treact/atom/x?symbol=[h]`
+
+
+## Environment Variables
 
 NAME | Description | Default
 ---- | ----------- | -------
@@ -73,7 +85,7 @@ SERVICE_VERSION | Application version | 0.0.0
 TREACTOR_MODE | Reactor mode (local, k8s) | local
 TREACTOR_TRACE_PROPAGATION | OpenTelemetry propagator (w3c)  | w3c
 
-### Molecule spec
+## Molecule spec
 
 
 ```
