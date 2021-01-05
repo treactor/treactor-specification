@@ -1,30 +1,31 @@
-# TReactor Specification
+# Telemetry Reactor Specification
 
-!COPIED out of treactor-go!
+Telemetry Reactor for Node is an implementation of the treactor-specification. It is part of a set of microservices designed for learning, testing, and experimenting with the concepts of observability.
 
-TReactor is a microservice designed to test and experiment with observability of microservices. You can play with it
-on your own machine in `local` more, but it gets interesting when you deploy it on a Kubernetes cluster or an Istio mesh.
+Telemetry Reactor (or TReactor for short) is a set of microservices designed to learn, test and experiment 
+with observability of microservices. You should be able to play with it on your own machine in `local`, 
+but it gets interesting when you deploy it in a Kubernetes cluster.
 
-In cluster mode you can have a bit over 120 microservices (atoms in the mendeleev table). You control `treactor` by
-giving it some interesting `molecules`.
+It gets interesting when deployed in a cluster, where you can have up to a bit over 120 microservices 
+(atoms in the mendeleev table). Controlling the microservices is done by create telemetry reactions
+(treactions) on a `molecules`. This will create cascading calls throughout the treactor. The calls and
+events can be observed into the observability platform of your choice.
 
-### Motivation
+## Implementations
 
-I created this microservice to let me inspect what happens inside the kubernetes cluster or a mesh. I've noticed that
-not all the scenario's and products worked that well together, certainly when you go a bit beyond the happy path. This
-microservice will enable me to *make reproducibles*. I hope it's also helpful for other people to *learn*  technologies
-like tracing, kubernetes networking, logging, istio, etc...
+This GitHub organisation includes a set of opinionated [implementations](implementations.md) of this 
+spec. The opinions include:
 
-I will start using (and extending) treactor for bug reports, articles and talks. Let's see if this will get
-as popular as httpbin is ;).
+* Observability framework based on [OpenTelemetry](https://opentelemetry.io/).
+* Clustering and orchestration based on [Kubernates](https://kubernetes.io/).
+* Optional service mesh based on [Istio](https://istio.io/).
+* Eventing based on [CloudEvents](https://cloudevents.io/) and [KNative](https://knative.dev/) (Future).
 
-### Features
+The options are, just opinions. Anyone can implement this spec to create a tool to demonstrate an 
+other framework (be it other observability framework, orchestration technology, mesh, etc...). Read
+the implementation [HOWTO](implement-howto.md) for step-by-step instructions.
 
-* Create cascading microservice calls from one origin call
-* Configure tracing and logging
-* Inspect headers, every level in the call hierarchy
-
-### Example
+## Example
 
 To see what treactor does lets take a very simple example. TReactor works by splitting molecules:
 
@@ -34,7 +35,7 @@ Everything between the brackets `[]` will be a call to the next microservice. Th
 and an optional parameter (`s` or `p`), this tells treactor how many times the service needs to be called and how (
 sequential or parallel). Multiple calls can be make by appending them using `^` (sequential) or `*` (parallel).
 
-Depending the content of the bracket the call will be different. If treactor detects an atom a call to the corresponding
+Depending on the content of the bracket the call will be different. If treactor detects an atom a call to the corresponding
 atom service will be made. But if treactor detects another sub-molecule it calls the next bond and apply the same
 logic till only atoms are left. So the example above will result in:
 
@@ -53,67 +54,10 @@ case only 1 `H`:
 
 Try the local [installation](installation.md), to see how it looks in the trace (this will make it more clear).
 
-## Implementations
+## Specification
 
-[Implementations](implementations.md)
+[Specification](specification.md)
 
-## Services
+## Scenarios
 
-### treactor-ui
-
-
-## treactor-api
-
-`/treact/split?molecule=[h]`
-
-## bound-n
-
-`/treact/bound/n?molecule=[h]`
-
-## atom-x
-
-`/treact/atom/x?symbol=[h]`
-
-
-## Environment Variables
-
-NAME | Description | Default
----- | ----------- | -------
-PORT | Port |
-SERVICE_NAME | Application name | treactor
-SERVICE_VERSION | Application version | 0.0.0
-TREACTOR_MODE | Reactor mode (local, k8s) | local
-TREACTOR_TRACE_PROPAGATION | OpenTelemetry propagator (w3c)  | w3c
-
-## Molecule spec
-
-
-```
-S    [H,x=1,y=2,z=3]*2[O,x=1,y=2,z=3],x=1,y=2,z=3
-A     H,x=1,y=2,z=3
-A                      O,x=1,y=2,z=3
-```
-
-
-```
-S    2[5[Ur,log:1,xyz:4]^5[C,log:1,xyz:4]],x:1,y:2
-O1     5[Ur,log:1,xyz:4]^5[C,log:1,xyz:4]
-A        Ur,log:1,xyz:4
-A                          C,log:1,xyz:4
-```
-
-## Test Scenarios
-
-https://github.com/wg/wrk
-
-`wrk -t12 -c400 -d30s "http://<yourip>/treact/split?molecule=6[C]^12[H]^6[O]"`
-
-glucose
-6[C]^12[H]^6[O]
-
-https://www.sigmaaldrich.com/catalog/product/aldrich/375756?lang=en&region=BE
-Baicalin hydrate
-
-C21H18O11 · xH2O
-
-env GOOS=linux GOARCH=amd64 go build cmd/treactor/main.go
+[Scenarios](scenarios/README.md)
